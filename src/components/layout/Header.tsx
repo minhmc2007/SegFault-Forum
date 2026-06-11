@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { SignInButton } from "@/components/auth/SignInButton"
 import { UserAvatar } from "@/components/auth/UserAvatar"
 import { SearchBar } from "@/components/search/SearchBar"
+import { ThemeToggle } from "@/components/layout/ThemeToggle"
 import { Terminal } from "lucide-react"
 
 export function Header() {
@@ -18,6 +19,7 @@ export function Header() {
         </Link>
 
         <div className="flex items-center gap-3">
+          <ThemeToggle />
           <SearchBar />
 
           {user ? (
