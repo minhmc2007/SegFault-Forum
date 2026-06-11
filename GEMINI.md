@@ -1,44 +1,36 @@
-# GEMINI: Help Fix GitHub Pages Deployment
+# GEMINI: Fix GitHub Pages Deployment (Updated)
 
 ## Project
-SegFault Forum — a React SPA hosted on GitHub Pages with Supabase backend.
+SegFault Forum — React SPA on GitHub Pages + Supabase.
 
 **Repo:** https://github.com/minhmc2007/SegFault-Forum  
 **Pages URL:** https://minhmc2007.github.io/SegFault-Forum/
 
-## Current State
-The site loads a white page. Console error:
+## Symptom
+White page. Console: `src/main.tsx:1 Failed to load resource: the server responded with a status of 404 ()`
+
+## What We've Verified
+
+### 1. The deployed HTML is the SOURCE file, not the built one
+Fetching the live page returns:
+```html
+<script type="module" src="/src/main.tsx"></script>
 ```
-src/main.tsx:1 Failed to load resource: the server responded with a status of 404
-```
-
-## Stack
-- Vite 8 + React 19 + TypeScript 6
-- React Router v7 (`createHashRouter`)
-- Tailwind CSS 3 + shadcn/ui
-- Supabase JS Client
-- Hosted on GitHub Pages via GitHub Actions
-
-## Config Files
-
-### vite.config.ts
-```ts
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import path from 'path'
-
-export default defineConfig({
-  base: '/SegFault-Forum/',
-  plugins: [react()],
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
-    },
-  },
-})
+But the **built** `dist/index.html` correctly has:
+```html
+<script type="module" crossorigin src="/SegFault-Forum/assets/index-xxxxx.js"></script>
+<link rel="stylesheet" crossorigin href="/SegFault-Forum/assets/index-xxxxx.css">
 ```
 
-### .github/workflows/deploy.yml
+This means GitHub Pages is serving the raw repo root, not the built `dist/` directory.
+
+### 2. Local build works perfectly
+```
+npm run build  ✅ (tsc + vite, no errors)
+```
+Built `dist/` contains correct files with correct paths.
+
+### 3. GitHub Actions deploy.yml
 ```yaml
 name: Deploy to GitHub Pages
 on:
@@ -70,49 +62,28 @@ jobs:
         uses: actions/deploy-pages@v4
 ```
 
-### Router (src/router/index.tsx)
-Using `createHashRouter` from react-router-dom v7:
-```
-Routes: /, /post/:id, /create, /profile/:username, /search
-```
+### 4. Router uses `createHashRouter` (to avoid SPA 404s)
 
-### package.json
-```json
-{
-  "name": "segfault-forum",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "preview": "vite preview"
-  }
-}
-```
+### 5. Vite config has `base: '/SegFault-Forum/'`
 
-### Built dist/index.html
-On build, assets correctly use `/SegFault-Forum/` prefix:
-```html
-<script type="module" crossorigin src="/SegFault-Forum/assets/index-xxxxx.js"></script>
-<link rel="stylesheet" crossorigin href="/SegFault-Forum/assets/index-xxxxx.css">
-```
+## What's Already Been Tried
+1. ✅ Set Vite `base: '/SegFault-Forum/'` 
+2. ✅ Switched to `createHashRouter`
+3. ✅ Changed Pages Source from "Deploy from a branch" to "GitHub Actions" (in repo Settings → Pages)
+4. ✅ Verified `dist/index.html` has correct asset paths
+5. ✅ GitHub Actions workflow runs successfully (green checkmark in Actions tab)
 
-## What I've Already Tried
-1. ✅ Set `base: '/SegFault-Forum/'` in `vite.config.ts` so asset paths match the repo subdirectory
-2. ✅ Switched from `createBrowserRouter` to `createHashRouter` to avoid 404s on page refresh
-3. ✅ Built locally: `npm run build` produces correct asset paths
-4. ✅ Verified built files exist in `dist/`
-5. ✅ GitHub Actions workflow runs successfully (check Actions tab)
+## Why It Still Fails
+Despite switching to "GitHub Actions" source, the live page still serves the raw repo `index.html` with `/src/main.tsx`. Possible causes:
 
-## Possible Issues I Suspect
-1. **GitHub Pages not enabled** in repo Settings → Pages → Source set to "GitHub Actions" (must be set, not "Deploy from a branch")
-2. **Environment not configured** — the workflow uses `environment: github-pages` — maybe this needs manual setup in repo Settings → Environments
-3. **Node version mismatch** — workflow uses Node 20 but local is Node 26 (but build passes fine locally with TypeScript 6)
-4. **Missing Pages deployment from Actions** — even if the workflow runs, Pages might not pick it up without the right configuration
-5. **SPA routing still broken** — even with hash router, maybe the `actions/configure-pages` step isn't handling this correctly
+1. **Workflow environment not created** — `environment: github-pages` in the workflow requires the environment to exist in Settings → Environments. Maybe it was never auto-created.
+2. **No new workflow run after changing source** — The source change might require a fresh push to trigger a new deployment that uses the Actions-based pipeline.
+3. **GitHub Pages deployment URL doesn't match** — The `actions/deploy-pages` uploads to GitHub's internal artifact storage, but the Pages URL (`minhmc2007.github.io/SegFault-Forum/`) might still be pointed at the old branch-based deployment.
+4. **Secret Pages configuration** — Maybe Pages is configured to deploy from `gh-pages` branch AND Actions, creating a conflict.
 
-## Questions for Gemini
-1. Why would `src/main.tsx` return 404? The built dist doesn't include source `.tsx` files at all.
-2. Is the `actions/configure-pages@v4` + `actions/deploy-pages@v4` combo correct for Vite SPAs?
-3. Do I need any additional Vite config for GitHub Pages (like `build.outDir`, `build.assetsDir`)?
-4. Does the user need to manually enable GitHub Pages in repo settings first?
-5. Is there a conflict between the Pages deployment branch and the Actions deployment method?
+## Questions for Claude
+1. Why would GitHub Pages serve raw repo files even after switching Source to "GitHub Actions"?
+2. Do we need to manually trigger a new workflow run after changing the source setting?
+3. Could the `environment: github-pages` block in the workflow block deployment if not manually created first?
+4. Is there a way to check the actual deployment status via `curl` or the GitHub API to confirm what Source Pages is actually using?
+5. Should we try a simpler approach: remove the `environment` block from the workflow, or switch to deploying to the `gh-pages` branch directly via `peaceiris/actions-gh-pages`?
