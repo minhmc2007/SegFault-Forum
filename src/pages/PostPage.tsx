@@ -14,7 +14,7 @@ import { Loader2, MessageSquare, Pencil, Trash2 } from "lucide-react"
 export function PostPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const { user } = useAuth()
+  const { user, profile } = useAuth()
   const { data: post, isLoading, error } = usePost(id ?? "")
   const { data: comments, isLoading: commentsLoading } = useComments(id ?? "")
   const deletePost = useDeletePost()
@@ -64,13 +64,15 @@ export function PostPage() {
           <div className="flex items-start justify-between gap-2">
             <h1 className="text-2xl font-bold">{post.title}</h1>
 
-            {user?.id === post.user_id && (
+            {(user?.id === post.user_id || profile?.is_admin) && (
               <div className="flex items-center gap-1 shrink-0">
-                <Link to={`/post/${post.id}/edit`}>
-                  <Button variant="ghost" size="icon" title="Edit">
-                    <Pencil className="h-4 w-4" />
-                  </Button>
-                </Link>
+                {user?.id === post.user_id && (
+                  <Link to={`/post/${post.id}/edit`}>
+                    <Button variant="ghost" size="icon" title="Edit">
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                  </Link>
+                )}
                 <Button
                   variant="ghost"
                   size="icon"

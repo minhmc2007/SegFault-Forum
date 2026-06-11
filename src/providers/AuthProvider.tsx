@@ -23,7 +23,7 @@ async function fetchProfileWithRetry(userId: string, maxRetries = 5): Promise<Pr
       .single()
 
     if (data) {
-      return { ...data, karma: data.karma ?? 10 }
+      return { ...data, karma: data.karma ?? 10, is_admin: data.is_admin ?? false }
     }
 
     if (i < maxRetries - 1) {

@@ -64,7 +64,14 @@ export function Profile() {
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2">
             <div>
-              <h1 className="text-2xl font-bold">{profile.username}</h1>
+              <div className="flex items-center gap-2">
+                <h1 className="text-2xl font-bold">{profile.username}</h1>
+                {profile.is_admin && (
+                  <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+                    Admin
+                  </span>
+                )}
+              </div>
               <p className="text-sm text-muted-foreground">
                 {profile.karma} karma
               </p>

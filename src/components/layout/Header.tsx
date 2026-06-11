@@ -39,6 +39,11 @@ export function Header() {
                 />
                 <span className="text-sm font-medium hidden sm:inline">
                   {profile?.username}
+                  {profile?.is_admin && (
+                    <span className="ml-1.5 text-[10px] font-semibold px-1 py-0.5 rounded bg-primary/20 text-primary">
+                      Admin
+                    </span>
+                  )}
                 </span>
               </Link>
             </div>

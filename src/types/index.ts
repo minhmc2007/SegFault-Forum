@@ -6,6 +6,7 @@ export interface Profile {
   bio: string | null
   website: string | null
   location: string | null
+  is_admin: boolean
   created_at: string
 }
 
