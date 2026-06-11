@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react"
 import { useAuth } from "@/providers/AuthProvider"
 import { useCreateComment } from "@/hooks/useComments"
+import { usePasteUpload } from "@/hooks/usePasteUpload"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { SimpleUploader } from "@/components/upload/SimpleUploader"
@@ -32,6 +33,8 @@ export function CommentForm({
     },
     []
   )
+
+  const handlePaste = usePasteUpload(handleInsert)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -66,6 +69,7 @@ export function CommentForm({
       <Textarea
         value={content}
         onChange={(e) => setContent(e.target.value)}
+        onPaste={handlePaste}
         placeholder={placeholder}
         rows={3}
       />

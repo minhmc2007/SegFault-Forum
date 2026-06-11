@@ -2,6 +2,7 @@ import { useState, useCallback } from "react"
 import { Textarea } from "@/components/ui/textarea"
 import { MarkdownRenderer } from "./MarkdownRenderer"
 import { SimpleUploader } from "@/components/upload/SimpleUploader"
+import { usePasteUpload } from "@/hooks/usePasteUpload"
 import { Eye, Edit3 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -26,6 +27,8 @@ export function MarkdownEditor({
     },
     [value, onChange]
   )
+
+  const handlePaste = usePasteUpload(handleInsert)
 
   return (
     <div className="border rounded-lg overflow-hidden">
@@ -69,6 +72,7 @@ export function MarkdownEditor({
         <Textarea
           value={value}
           onChange={(e) => onChange(e.target.value)}
+          onPaste={handlePaste}
           placeholder={placeholder}
           className="border-0 rounded-none resize-y focus-visible:ring-0 focus-visible:ring-offset-0"
           style={{ minHeight }}
