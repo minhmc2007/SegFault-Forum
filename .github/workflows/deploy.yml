@@ -28,8 +28,8 @@ jobs:
 
       - run: npm run build
         env:
-          VITE_SUPABASE_URL: https://dqvhqppjjyjrivnvxfsb.supabase.co
-          VITE_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRxdmhxcHBqanlqcml2bnZ4ZnNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODExNzk2NjUsImV4cCI6MjA5Njc1NTY2NX0.BovXEPiXyLXYhKrZXD5VZV2mTkaMxk9K1C_cmAcrv9Y
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
 
       - uses: actions/configure-pages@v4
 
