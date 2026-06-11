@@ -1,22 +1,29 @@
-import { useParams } from "react-router-dom"
-import { usePost } from "@/hooks/usePosts"
+import { useParams, useNavigate, Link } from "react-router-dom"
+import { usePost, useDeletePost } from "@/hooks/usePosts"
 import { useComments } from "@/hooks/useComments"
+import { useAuth } from "@/providers/AuthProvider"
 import { MarkdownRenderer } from "@/components/markdown/MarkdownRenderer"
 import { VoteButton } from "@/components/voting/VoteButton"
 import { UserAvatar } from "@/components/auth/UserAvatar"
 import { CommentForm } from "@/components/comments/CommentForm"
 import { CommentThread } from "@/components/comments/CommentThread"
+import { Button } from "@/components/ui/button"
 import { formatDistanceToNow } from "date-fns"
-import { Loader2, MessageSquare } from "lucide-react"
-import { Link } from "react-router-dom"
+import { Loader2, MessageSquare, Pencil, Trash2 } from "lucide-react"
 
 export function PostPage() {
   const { id } = useParams<{ id: string }>()
+  const navigate = useNavigate()
+  const { user } = useAuth()
   const { data: post, isLoading, error } = usePost(id ?? "")
-  const {
-    data: comments,
-    isLoading: commentsLoading,
-  } = useComments(id ?? "")
+  const { data: comments, isLoading: commentsLoading } = useComments(id ?? "")
+  const deletePost = useDeletePost()
+
+  async function handleDelete() {
+    if (!confirm("Delete this post permanently?")) return
+    await deletePost.mutateAsync(post!.id)
+    navigate("/")
+  }
 
   if (isLoading) {
     return (
@@ -54,9 +61,31 @@ export function PostPage() {
             </span>
           )}
 
-          <h1 className="text-2xl font-bold mb-2">{post.title}</h1>
+          <div className="flex items-start justify-between gap-2">
+            <h1 className="text-2xl font-bold">{post.title}</h1>
 
-          <div className="flex items-center gap-3 text-sm text-muted-foreground mb-6">
+            {user?.id === post.user_id && (
+              <div className="flex items-center gap-1 shrink-0">
+                <Link to={`/post/${post.id}/edit`}>
+                  <Button variant="ghost" size="icon" title="Edit">
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                </Link>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  title="Delete"
+                  onClick={handleDelete}
+                  disabled={deletePost.isPending}
+                  className="text-destructive hover:text-destructive"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
+          </div>
+
+          <div className="flex items-center gap-3 text-sm text-muted-foreground mt-2 mb-6">
             <Link
               to={`/profile/${post.author?.username}`}
               className="flex items-center gap-1.5 hover:text-foreground transition-colors"

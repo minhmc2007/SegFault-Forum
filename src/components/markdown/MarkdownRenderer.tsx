@@ -1,5 +1,6 @@
 import Markdown from "react-markdown"
 import remarkGfm from "remark-gfm"
+import rehypeRaw from "rehype-raw"
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism"
 import type { Components } from "react-markdown"
@@ -57,10 +58,28 @@ const components: Components = {
   },
 }
 
+function VideoEmbed({ src }: { src?: string }) {
+  if (!src) return null
+  return (
+    <video
+      src={src}
+      controls
+      className="max-w-full rounded-lg border my-4"
+      preload="metadata"
+    >
+      Your browser does not support the video tag.
+    </video>
+  )
+}
+
 export function MarkdownRenderer({ content }: MarkdownRendererProps) {
   return (
     <div className="prose prose-neutral dark:prose-invert max-w-none">
-      <Markdown remarkPlugins={[remarkGfm]} components={components}>
+      <Markdown
+        remarkPlugins={[remarkGfm]}
+        rehypePlugins={[rehypeRaw]}
+        components={{ ...components, video: VideoEmbed }}
+      >
         {content}
       </Markdown>
     </div>

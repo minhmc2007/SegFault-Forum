@@ -1,8 +1,9 @@
-import { useState } from "react"
+import { useState, useCallback } from "react"
 import { useAuth } from "@/providers/AuthProvider"
 import { useCreateComment } from "@/hooks/useComments"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
+import { SimpleUploader } from "@/components/upload/SimpleUploader"
 import { SignInButton } from "@/components/auth/SignInButton"
 import { Loader2 } from "lucide-react"
 
@@ -24,6 +25,13 @@ export function CommentForm({
   const { user } = useAuth()
   const createComment = useCreateComment()
   const [content, setContent] = useState("")
+
+  const handleInsert = useCallback(
+    (md: string) => {
+      setContent((prev) => (prev ? `${prev}\n\n${md}` : md))
+    },
+    []
+  )
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -61,22 +69,25 @@ export function CommentForm({
         placeholder={placeholder}
         rows={3}
       />
-      <div className="flex justify-end gap-2">
-        {onDone && (
-          <Button type="button" variant="ghost" size="sm" onClick={onDone}>
-            Cancel
-          </Button>
-        )}
-        <Button
-          type="submit"
-          size="sm"
-          disabled={!content.trim() || createComment.isPending}
-        >
-          {createComment.isPending && (
-            <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+      <div className="flex items-center justify-between gap-2">
+        <SimpleUploader onInsert={handleInsert} compact />
+        <div className="flex items-center gap-2">
+          {onDone && (
+            <Button type="button" variant="ghost" size="sm" onClick={onDone}>
+              Cancel
+            </Button>
           )}
-          {parentId ? "Reply" : "Comment"}
-        </Button>
+          <Button
+            type="submit"
+            size="sm"
+            disabled={!content.trim() || createComment.isPending}
+          >
+            {createComment.isPending && (
+              <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+            )}
+            {parentId ? "Reply" : "Comment"}
+          </Button>
+        </div>
       </div>
     </form>
   )
