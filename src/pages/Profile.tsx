@@ -1,6 +1,7 @@
 import { useAuth } from "@/providers/AuthProvider"
 import { useProfile, useUpdateProfile } from "@/hooks/useProfile"
 import { UserAvatar } from "@/components/auth/UserAvatar"
+import { ProfileActivity } from "@/components/profile/ProfileActivity"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
@@ -159,7 +160,7 @@ export function Profile() {
 
       <div className="mt-10 border-t pt-6">
         <h2 className="text-lg font-semibold mb-4">Activity</h2>
-        <p className="text-sm text-muted-foreground">Posts and comments will appear here.</p>
+        <ProfileActivity userId={profile.id} />
       </div>
     </div>
   )

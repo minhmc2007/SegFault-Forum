@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/lib/supabase"
 import { useAuth } from "@/providers/AuthProvider"
-import type { Profile } from "@/types"
+import type { Profile, Post } from "@/types"
 
 export function useProfile(username: string) {
   return useQuery({
@@ -16,6 +16,46 @@ export function useProfile(username: string) {
       return { ...data, karma: data.karma ?? 10 } as Profile
     },
     enabled: !!username,
+  })
+}
+
+export function useUserPosts(userId: string) {
+  return useQuery({
+    queryKey: ["user-posts", userId],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("posts")
+        .select(`
+          *,
+          category:categories(name, slug, color)
+        `)
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false })
+        .limit(20)
+
+      return (data ?? []) as unknown as Post[]
+    },
+    enabled: !!userId,
+  })
+}
+
+export function useUserComments(userId: string) {
+  return useQuery({
+    queryKey: ["user-comments", userId],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("comments")
+        .select(`
+          *,
+          post:posts!comments_post_id_fkey(id, title)
+        `)
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false })
+        .limit(20)
+
+      return (data ?? []) as unknown as { id: string; content: string; created_at: string; post: { id: string; title: string } | null }[]
+    },
+    enabled: !!userId,
   })
 }
 
