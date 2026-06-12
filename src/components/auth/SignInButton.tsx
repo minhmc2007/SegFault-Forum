@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Loader2, ChevronDown } from "lucide-react"
 
 export function SignInButton() {
-  const { signInWithGithub, signInWithGoogle, signInWithFacebook, loading } = useAuth()
+  const { signInWithGithub, signInWithGoogle, loading } = useAuth()
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 
@@ -54,15 +54,13 @@ export function SignInButton() {
             </svg>
             Google
           </button>
-          <button
-            onClick={() => { signInWithFacebook(); setOpen(false) }}
-            className="flex items-center gap-2 w-full px-3 py-2 text-sm rounded-md hover:bg-muted transition-colors"
-          >
+          <div className="flex items-center gap-2 w-full px-3 py-2 text-sm rounded-md text-muted-foreground cursor-not-allowed">
             <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="#1877F2">
               <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
             </svg>
-            Facebook
-          </button>
+            <span className="flex-1">Facebook</span>
+            <span className="text-[10px] text-muted-foreground/60">unavailable</span>
+          </div>
         </div>
       )}
     </div>
