@@ -1,4 +1,4 @@
-export type UserRank = "new_member" | "member" | "senior_member" | "developer" | "well_known_developer" | "admin"
+export type UserRank = "new_member" | "member" | "senior_member" | "developer" | "well_known_developer" | "admin" | "bot"
 
 export const rankLabels: Record<UserRank, string> = {
   new_member: "New Member",
@@ -7,6 +7,7 @@ export const rankLabels: Record<UserRank, string> = {
   developer: "Developer",
   well_known_developer: "Well-Known Developer",
   admin: "Admin",
+  bot: "BOT",
 }
 
 export const rankColors: Record<UserRank, string> = {
@@ -16,6 +17,7 @@ export const rankColors: Record<UserRank, string> = {
   developer: "#F59E0B",
   well_known_developer: "#EF4444",
   admin: "#10B981",
+  bot: "#8B5CF6",
 }
 
 export interface Profile {
