@@ -1,5 +1,7 @@
+import { useRef } from "react"
 import { useAuth } from "@/providers/AuthProvider"
 import { useProfile, useUpdateProfile } from "@/hooks/useProfile"
+import { useUpload } from "@/hooks/useUpload"
 import { UserAvatar } from "@/components/auth/UserAvatar"
 import { ProfileActivity } from "@/components/profile/ProfileActivity"
 import { Button } from "@/components/ui/button"
@@ -7,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
 import { useParams } from "react-router-dom"
 import { useState, useEffect } from "react"
-import { Calendar, Globe, MapPin, Pencil, Save, X, Loader2 } from "lucide-react"
+import { Calendar, Camera, Globe, MapPin, Pencil, Save, X, Loader2 } from "lucide-react"
 import { formatDistanceToNow } from "date-fns"
 import { rankLabels, rankColors } from "@/types"
 import type { UserRank } from "@/types"
@@ -19,18 +21,36 @@ export function Profile() {
   const updateProfile = useUpdateProfile()
   const isOwner = user?.id === profile?.id
 
+  const avatarRef = useRef<HTMLInputElement>(null)
+  const { upload } = useUpload()
+  const [avatarUploading, setAvatarUploading] = useState(false)
+
   const [editing, setEditing] = useState(false)
+  const [name, setName] = useState("")
   const [bio, setBio] = useState("")
   const [website, setWebsite] = useState("")
   const [location, setLocation] = useState("")
 
   useEffect(() => {
     if (profile) {
+      setName(profile.name ?? "")
       setBio(profile.bio ?? "")
       setWebsite(profile.website ?? "")
       setLocation(profile.location ?? "")
     }
   }, [profile])
+
+  async function handleAvatarUpload(file: File) {
+    setAvatarUploading(true)
+    try {
+      const result = await upload(file)
+      await updateProfile.mutateAsync({ avatar_url: result.url })
+    } catch {
+      // ignore
+    } finally {
+      setAvatarUploading(false)
+    }
+  }
 
   if (isLoading) {
     return (
@@ -50,24 +70,49 @@ export function Profile() {
   }
 
   async function handleSave() {
-    await updateProfile.mutateAsync({ bio, website, location })
+    await updateProfile.mutateAsync({ name: name.trim() || null, bio, website, location })
     setEditing(false)
   }
 
   return (
     <div className="max-w-2xl mx-auto">
       <div className="flex items-start gap-6">
-        <UserAvatar
-          username={profile.username}
-          avatarUrl={profile.avatar_url}
-          size="xl"
-        />
+        <div className="relative shrink-0">
+          <UserAvatar
+            username={profile.username}
+            avatarUrl={profile.avatar_url}
+            size="xl"
+          />
+          {isOwner && (
+            <>
+              <input
+                ref={avatarRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => e.target.files?.[0] && handleAvatarUpload(e.target.files[0])}
+              />
+              <button
+                type="button"
+                onClick={() => avatarRef.current?.click()}
+                disabled={avatarUploading}
+                className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 opacity-0 hover:opacity-100 transition-opacity"
+              >
+                {avatarUploading ? (
+                  <Loader2 className="h-5 w-5 animate-spin text-white" />
+                ) : (
+                  <Camera className="h-5 w-5 text-white" />
+                )}
+              </button>
+            </>
+          )}
+        </div>
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2">
             <div>
               <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="text-2xl font-bold">{profile.username}</h1>
+                <h1 className="text-2xl font-bold">{profile.name || profile.username}</h1>
                 <span
                   className="text-xs font-medium px-2 py-0.5 rounded-full border"
                   style={{ backgroundColor: rankColors[profile.rank as UserRank] + "20", color: rankColors[profile.rank as UserRank], borderColor: rankColors[profile.rank as UserRank] + "40" }}
@@ -109,6 +154,15 @@ export function Profile() {
             {editing ? (
               <>
                 <div>
+                  <label className="text-sm font-medium">Display Name</label>
+                  <Input
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Your display name"
+                    className="mt-1"
+                  />
+                </div>
+                <div>
                   <label className="text-sm font-medium">Bio</label>
                   <Textarea
                     value={bio}
@@ -139,6 +193,7 @@ export function Profile() {
               </>
             ) : (
               <>
+                {profile.name && <p className="text-sm text-muted-foreground">{profile.name}</p>}
                 {profile.bio && <p className="text-sm">{profile.bio}</p>}
 
                 <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">

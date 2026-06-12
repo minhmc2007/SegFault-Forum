@@ -205,6 +205,7 @@ export type Database = {
           is_admin: boolean | null
           karma: number | null
           location: string | null
+          name: string | null
           rank: string | null
           username: string
           website: string | null
@@ -217,6 +218,7 @@ export type Database = {
           is_admin?: boolean | null
           karma?: number | null
           location?: string | null
+          name?: string | null
           rank?: string | null
           username: string
           website?: string | null
@@ -229,6 +231,7 @@ export type Database = {
           is_admin?: boolean | null
           karma?: number | null
           location?: string | null
+          name?: string | null
           rank?: string | null
           username?: string
           website?: string | null

@@ -21,6 +21,7 @@ export const rankColors: Record<UserRank, string> = {
 export interface Profile {
   id: string
   username: string
+  name: string | null
   avatar_url: string | null
   karma: number
   bio: string | null
