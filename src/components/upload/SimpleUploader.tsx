@@ -2,7 +2,6 @@ import { useRef, useState } from "react"
 import { useUpload } from "@/hooks/useUpload"
 import { uploadToGofile } from "@/lib/gofile"
 import { Loader2, Upload, FileUp } from "lucide-react"
-import { cn } from "@/lib/utils"
 
 interface SimpleUploaderProps {
   onInsert: (markdown: string) => void
@@ -14,7 +13,9 @@ export function SimpleUploader({ onInsert }: SimpleUploaderProps) {
   const mediaRef = useRef<HTMLInputElement>(null)
   const gofileRef = useRef<HTMLInputElement>(null)
   const { upload } = useUpload()
-  const [uploading, setUploading] = useState(false)
+  const [mediaUploading, setMediaUploading] = useState(false)
+  const [gofileUploading, setGofileUploading] = useState(false)
+  const [gofileProgress, setGofileProgress] = useState(0)
   const [error, setError] = useState<string | null>(null)
 
   async function handleMediaFiles(files: FileList) {
@@ -30,7 +31,7 @@ export function SimpleUploader({ onInsert }: SimpleUploaderProps) {
         }
       }
 
-      setUploading(true)
+      setMediaUploading(true)
       try {
         const result = await upload(file)
         const md = isVideo
@@ -40,7 +41,7 @@ export function SimpleUploader({ onInsert }: SimpleUploaderProps) {
       } catch {
         setError("Upload failed")
       } finally {
-        setUploading(false)
+        setMediaUploading(false)
       }
     }
     mediaRef.current!.value = ""
@@ -49,15 +50,17 @@ export function SimpleUploader({ onInsert }: SimpleUploaderProps) {
   async function handleGofileUpload(files: FileList) {
     setError(null)
     for (const file of Array.from(files)) {
-      setUploading(true)
+      setGofileUploading(true)
+      setGofileProgress(0)
       try {
-        const url = await uploadToGofile(file)
+        const url = await uploadToGofile(file, (pct) => setGofileProgress(pct))
         const name = file.name.replace(/[[]()]/g, "_")
         onInsert(`[${name}](${url}) *(temporary — expires if downloads are low)*`)
       } catch {
         setError("Gofile upload failed")
       } finally {
-        setUploading(false)
+        setGofileUploading(false)
+        setGofileProgress(0)
       }
     }
     gofileRef.current!.value = ""
@@ -82,33 +85,29 @@ export function SimpleUploader({ onInsert }: SimpleUploaderProps) {
       <button
         type="button"
         onClick={() => mediaRef.current?.click()}
-        disabled={uploading}
-        className={cn(
-          "inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors",
-        )}
+        disabled={mediaUploading || gofileUploading}
+        className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
       >
-        {uploading ? (
+        {mediaUploading ? (
           <Loader2 className="h-3.5 w-3.5 animate-spin" />
         ) : (
           <Upload className="h-3.5 w-3.5" />
         )}
-        {uploading ? "Uploading..." : "Attach media"}
+        {mediaUploading ? "Uploading..." : "Attach media"}
       </button>
       <button
         type="button"
         onClick={() => gofileRef.current?.click()}
-        disabled={uploading}
-        className={cn(
-          "inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors",
-        )}
+        disabled={mediaUploading || gofileUploading}
+        className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
         title="Upload large files to Gofile (temporary storage)"
       >
-        {uploading ? (
+        {gofileUploading ? (
           <Loader2 className="h-3.5 w-3.5 animate-spin" />
         ) : (
           <FileUp className="h-3.5 w-3.5" />
         )}
-        {uploading ? "Uploading..." : "Upload binary"}
+        {gofileUploading ? `${gofileProgress}%` : "Upload binary"}
       </button>
       {error && <p className="text-xs text-destructive w-full">{error}</p>}
     </div>
