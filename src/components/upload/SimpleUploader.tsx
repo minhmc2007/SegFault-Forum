@@ -1,22 +1,23 @@
 import { useRef, useState } from "react"
 import { useUpload } from "@/hooks/useUpload"
-import { Loader2, Upload } from "lucide-react"
+import { uploadToGofile } from "@/lib/gofile"
+import { Loader2, Upload, FileUp } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface SimpleUploaderProps {
   onInsert: (markdown: string) => void
-  compact?: boolean
 }
 
 const MAX_VIDEO_SEC = 60
 
-export function SimpleUploader({ onInsert, compact }: SimpleUploaderProps) {
-  const inputRef = useRef<HTMLInputElement>(null)
+export function SimpleUploader({ onInsert }: SimpleUploaderProps) {
+  const mediaRef = useRef<HTMLInputElement>(null)
+  const gofileRef = useRef<HTMLInputElement>(null)
   const { upload } = useUpload()
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  async function handleFiles(files: FileList) {
+  async function handleMediaFiles(files: FileList) {
     setError(null)
     for (const file of Array.from(files)) {
       const isVideo = file.type.startsWith("video/")
@@ -42,26 +43,48 @@ export function SimpleUploader({ onInsert, compact }: SimpleUploaderProps) {
         setUploading(false)
       }
     }
-    inputRef.current!.value = ""
+    mediaRef.current!.value = ""
+  }
+
+  async function handleGofileUpload(files: FileList) {
+    setError(null)
+    for (const file of Array.from(files)) {
+      setUploading(true)
+      try {
+        const url = await uploadToGofile(file)
+        const name = file.name.replace(/[[]()]/g, "_")
+        onInsert(`[${name}](${url}) *(temporary — expires if downloads are low)*`)
+      } catch {
+        setError("Gofile upload failed")
+      } finally {
+        setUploading(false)
+      }
+    }
+    gofileRef.current!.value = ""
   }
 
   return (
-    <div>
+    <div className="flex flex-wrap items-center gap-2">
       <input
-        ref={inputRef}
+        ref={mediaRef}
         type="file"
         accept="image/*,video/*"
         multiple
         className="hidden"
-        onChange={(e) => e.target.files && handleFiles(e.target.files)}
+        onChange={(e) => e.target.files && handleMediaFiles(e.target.files)}
+      />
+      <input
+        ref={gofileRef}
+        type="file"
+        className="hidden"
+        onChange={(e) => e.target.files && handleGofileUpload(e.target.files)}
       />
       <button
         type="button"
-        onClick={() => inputRef.current?.click()}
+        onClick={() => mediaRef.current?.click()}
         disabled={uploading}
         className={cn(
           "inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors",
-          compact && "text-xs"
         )}
       >
         {uploading ? (
@@ -71,7 +94,23 @@ export function SimpleUploader({ onInsert, compact }: SimpleUploaderProps) {
         )}
         {uploading ? "Uploading..." : "Attach media"}
       </button>
-      {error && <p className="text-xs text-destructive mt-1">{error}</p>}
+      <button
+        type="button"
+        onClick={() => gofileRef.current?.click()}
+        disabled={uploading}
+        className={cn(
+          "inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors",
+        )}
+        title="Upload large files to Gofile (temporary storage)"
+      >
+        {uploading ? (
+          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+        ) : (
+          <FileUp className="h-3.5 w-3.5" />
+        )}
+        {uploading ? "Uploading..." : "Upload binary"}
+      </button>
+      {error && <p className="text-xs text-destructive w-full">{error}</p>}
     </div>
   )
 }

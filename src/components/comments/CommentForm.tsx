@@ -74,7 +74,7 @@ export function CommentForm({
         rows={3}
       />
       <div className="flex items-center justify-between gap-2">
-        <SimpleUploader onInsert={handleInsert} compact />
+        <SimpleUploader onInsert={handleInsert} />
         <div className="flex items-center gap-2">
           {onDone && (
             <Button type="button" variant="ghost" size="sm" onClick={onDone}>

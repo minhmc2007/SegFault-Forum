@@ -57,7 +57,7 @@ export function MarkdownEditor({
             Preview
           </button>
         </div>
-        {!preview && <div className="px-3"><SimpleUploader onInsert={handleInsert} compact /></div>}
+        {!preview && <div className="px-3"><SimpleUploader onInsert={handleInsert} /></div>}
       </div>
 
       {preview ? (
