@@ -3,6 +3,7 @@ import { supabase } from "@/lib/supabase"
 import { useAuth } from "@/providers/AuthProvider"
 import { censor } from "@/lib/profanity"
 import { isPunished } from "@/lib/punishment"
+import { extractMentions, resolveMentionUsers } from "@/lib/mentions"
 import { useEffect } from "react"
 import type { Comment } from "@/types"
 
@@ -98,6 +99,23 @@ export function useCreateComment() {
         depth,
       })
       if (error) throw error
+
+      const mentions = extractMentions(content)
+      if (mentions.length > 0) {
+        const mentionMap = await resolveMentionUsers(mentions)
+        const notifications = [...mentionMap.entries()]
+          .filter(([_, uid]) => uid !== user.id)
+          .map(([username, uid]) => ({
+            user_id: uid,
+            type: "mention",
+            title: `You were mentioned by ${user.user_metadata?.user_name ?? "someone"}`,
+            message: `@${username} was mentioned in a comment`,
+            link: `/post/${postId}`,
+          }))
+        if (notifications.length > 0) {
+          await supabase.from("notifications").insert(notifications)
+        }
+      }
     },
     onSuccess: (_, vars) => {
       queryClient.invalidateQueries({ queryKey: ["comments", vars.postId] })

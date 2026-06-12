@@ -3,6 +3,7 @@ import { supabase } from "@/lib/supabase"
 import { useAuth } from "@/providers/AuthProvider"
 import { censor } from "@/lib/profanity"
 import { isPunished } from "@/lib/punishment"
+import { extractMentions, resolveMentionUsers } from "@/lib/mentions"
 import type { Post, SortOption, Tag } from "@/types"
 
 async function attachTags(post: Post): Promise<Post> {
@@ -108,6 +109,24 @@ export function useCreatePost() {
 
       if (tags.length > 0) {
         await saveTags(data!.id, tags)
+      }
+
+      const postId = data!.id
+      const mentions = extractMentions(content)
+      if (mentions.length > 0) {
+        const mentionMap = await resolveMentionUsers(mentions)
+        const notifications = [...mentionMap.entries()]
+          .filter(([_, uid]) => uid !== user.id)
+          .map(([username, uid]) => ({
+            user_id: uid,
+            type: "mention",
+            title: `You were mentioned by ${user.user_metadata?.user_name ?? "someone"}`,
+            message: `@${username} was mentioned in "${title}"`,
+            link: `/post/${postId}`,
+          }))
+        if (notifications.length > 0) {
+          await supabase.from("notifications").insert(notifications)
+        }
       }
     },
     onSuccess: () => {

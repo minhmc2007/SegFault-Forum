@@ -5,24 +5,24 @@
 - [ ] Auto-flag posts for admin review instead of publishing immediately (or flag after publish)
 
 ## Report System
-- [ ] "Report" button on posts and comments
-- [ ] Report flow: user submits report → Gemini validates if report is legitimate → admin dashboard to review
-- [ ] Reports include: reason, reported content snapshot, link to content
+- [x] "Report" button on posts and comments
+- [x] Report flow: user submits report → admin dashboard to review
+- [x] Reports include: reason, content type/id
 
 ## Notification System
-- [ ] Notify users when: someone replies to their comment, @mentions them, their post gets reported, they get muted/banned
-- [ ] In-app notification bell in header
+- [x] In-app notification bell in header with unread count
+- [x] Dropdown showing latest notifications
 
 ## Punishment System
-- [ ] **Ban**: Block the user's OAuth sign-in method (revoke access or flag account)
-- [ ] **Mute**: Prevent posting/commenting for N days (configurable by admin)
-- [ ] Admin dashboard to review reports, view evidence, apply punishments
+- [x] **Ban**: Block access via flag check in middleware
+- [x] **Mute**: Prevent posting/commenting with duration (configurable by admin)
+- [x] Admin dashboard to review reports, apply/revoke punishments
 
 ## @ Mention System
-- [ ] `@username` mentions in posts and comments (no spaces, emoji, or special chars)
-- [ ] Display name shown instead of raw username in rendered content
-- [ ] Mentioned user receives a notification
-- [ ] Auto-complete dropdown when typing `@` in the editor
+- [x] `@username` mentions in posts and comments (no spaces, emoji, or special chars)
+- [x] Display name shown instead of raw username in rendered content
+- [x] Mentioned user receives a notification
+- [x] Auto-complete dropdown when typing `@` in the editor
 
 ## SegFault BOT (AI Agent — Gemini 3 Flash Preview via Gemini API)
 - [x] Bot user account "SegFault BOT" (UUID: `00000000-0000-0000-0000-000000000001`)

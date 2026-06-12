@@ -3,6 +3,7 @@ import remarkGfm from "remark-gfm"
 import rehypeRaw from "rehype-raw"
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism"
+import { renderMentions } from "@/lib/mentions"
 import type { Components } from "react-markdown"
 
 interface MarkdownRendererProps {
@@ -80,7 +81,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
         rehypePlugins={[rehypeRaw]}
         components={{ ...components, video: VideoEmbed }}
       >
-        {content}
+        {renderMentions(content)}
       </Markdown>
     </div>
   )
