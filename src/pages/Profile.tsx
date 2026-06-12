@@ -9,6 +9,8 @@ import { useParams } from "react-router-dom"
 import { useState, useEffect } from "react"
 import { Calendar, Globe, MapPin, Pencil, Save, X, Loader2 } from "lucide-react"
 import { formatDistanceToNow } from "date-fns"
+import { rankLabels, rankColors } from "@/types"
+import type { UserRank } from "@/types"
 
 export function Profile() {
   const { username } = useParams<{ username: string }>()
@@ -64,8 +66,14 @@ export function Profile() {
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2">
             <div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <h1 className="text-2xl font-bold">{profile.username}</h1>
+                <span
+                  className="text-xs font-medium px-2 py-0.5 rounded-full border"
+                  style={{ backgroundColor: rankColors[profile.rank as UserRank] + "20", color: rankColors[profile.rank as UserRank], borderColor: rankColors[profile.rank as UserRank] + "40" }}
+                >
+                  {rankLabels[profile.rank as UserRank]}
+                </span>
                 {profile.is_admin && (
                   <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
                     Admin

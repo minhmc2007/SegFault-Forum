@@ -60,6 +60,18 @@ export function PostPage() {
               {post.category.name}
             </span>
           )}
+          {post.tags && post.tags.length > 0 && (
+            <div className="flex flex-wrap gap-1.5 mb-2">
+              {post.tags.map((tag) => (
+                <span
+                  key={tag.id}
+                  className="text-xs font-medium px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20"
+                >
+                  #{tag.name}
+                </span>
+              ))}
+            </div>
+          )}
 
           <div className="flex items-start justify-between gap-2">
             <h1 className="text-2xl font-bold">{post.title}</h1>

@@ -4,6 +4,7 @@ import { useAuth } from "@/providers/AuthProvider"
 import { useCategories } from "@/hooks/useCategories"
 import { useCreatePost } from "@/hooks/usePosts"
 import { MarkdownEditor } from "@/components/markdown/MarkdownEditor"
+import { TagInput } from "@/components/posts/TagInput"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -23,6 +24,7 @@ export function CreatePost() {
 
   const [title, setTitle] = useState("")
   const [content, setContent] = useState("")
+  const [tags, setTags] = useState<string[]>([])
   const [categoryId, setCategoryId] = useState<string>("")
 
   if (!user) {
@@ -42,6 +44,7 @@ export function CreatePost() {
         title: title.trim(),
         content: content.trim(),
         category_id: categoryId ? Number(categoryId) : null,
+        tags,
       },
       {
         onSuccess: () => navigate("/"),
@@ -62,6 +65,8 @@ export function CreatePost() {
             className="text-lg font-medium"
           />
         </div>
+
+        <TagInput tags={tags} onChange={setTags} />
 
         <div className="relative">
           <Select value={categoryId} onValueChange={setCategoryId}>

@@ -19,7 +19,7 @@ export function PostCard({ post }: PostCardProps) {
       />
 
       <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 mb-1">
+        <div className="flex items-center gap-2 mb-1 flex-wrap">
           {post.category && (
             <Link
               to={`/?category=${post.category.slug}`}
@@ -29,6 +29,14 @@ export function PostCard({ post }: PostCardProps) {
               {post.category.name}
             </Link>
           )}
+          {post.tags?.map((tag) => (
+            <span
+              key={tag.id}
+              className="text-xs font-medium px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20"
+            >
+              #{tag.name}
+            </span>
+          ))}
         </div>
 
         <Link

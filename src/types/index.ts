@@ -1,3 +1,23 @@
+export type UserRank = "new_member" | "member" | "senior_member" | "developer" | "well_known_developer" | "admin"
+
+export const rankLabels: Record<UserRank, string> = {
+  new_member: "New Member",
+  member: "Member",
+  senior_member: "Senior Member",
+  developer: "Developer",
+  well_known_developer: "Well-Known Developer",
+  admin: "Admin",
+}
+
+export const rankColors: Record<UserRank, string> = {
+  new_member: "#6B7280",
+  member: "#3B82F6",
+  senior_member: "#8B5CF6",
+  developer: "#F59E0B",
+  well_known_developer: "#EF4444",
+  admin: "#10B981",
+}
+
 export interface Profile {
   id: string
   username: string
@@ -7,6 +27,7 @@ export interface Profile {
   website: string | null
   location: string | null
   is_admin: boolean
+  rank: UserRank
   created_at: string
 }
 
@@ -17,6 +38,12 @@ export interface Category {
   description: string | null
   color: string
   created_at: string
+}
+
+export interface Tag {
+  id: number
+  name: string
+  slug: string
 }
 
 export interface Post {
@@ -30,6 +57,7 @@ export interface Post {
   created_at: string
   author?: { username: string; avatar_url: string | null }
   category?: { name: string; slug: string; color: string }
+  tags?: Tag[]
   user_vote?: number | null
 }
 

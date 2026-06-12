@@ -118,6 +118,36 @@ export type Database = {
           },
         ]
       }
+      post_tags: {
+        Row: {
+          post_id: string
+          tag_id: number
+        }
+        Insert: {
+          post_id: string
+          tag_id: number
+        }
+        Update: {
+          post_id?: string
+          tag_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_tags_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "post_tags_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "tags"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       posts: {
         Row: {
           category_id: number | null
@@ -175,6 +205,7 @@ export type Database = {
           is_admin: boolean | null
           karma: number | null
           location: string | null
+          rank: string | null
           username: string
           website: string | null
         }
@@ -186,6 +217,7 @@ export type Database = {
           is_admin?: boolean | null
           karma?: number | null
           location?: string | null
+          rank?: string | null
           username: string
           website?: string | null
         }
@@ -197,8 +229,30 @@ export type Database = {
           is_admin?: boolean | null
           karma?: number | null
           location?: string | null
+          rank?: string | null
           username?: string
           website?: string | null
+        }
+        Relationships: []
+      }
+      tags: {
+        Row: {
+          created_at: string
+          id: number
+          name: string
+          slug: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          name: string
+          slug: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          name?: string
+          slug?: string
         }
         Relationships: []
       }

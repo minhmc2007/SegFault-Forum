@@ -13,7 +13,7 @@ export function useProfile(username: string) {
         .eq("username", username)
         .single()
       if (!data) throw new Error("Profile not found")
-      return { ...data, karma: data.karma ?? 10, is_admin: data.is_admin ?? false } as Profile
+      return { ...data, karma: data.karma ?? 10, is_admin: data.is_admin ?? false, rank: data.rank ?? "new_member" } as Profile
     },
     enabled: !!username,
   })

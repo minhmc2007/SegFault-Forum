@@ -4,6 +4,7 @@ import { useAuth } from "@/providers/AuthProvider"
 import { usePost, useUpdatePost } from "@/hooks/usePosts"
 import { useCategories } from "@/hooks/useCategories"
 import { MarkdownEditor } from "@/components/markdown/MarkdownEditor"
+import { TagInput } from "@/components/posts/TagInput"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -25,12 +26,14 @@ export function EditPost() {
 
   const [title, setTitle] = useState("")
   const [content, setContent] = useState("")
+  const [tags, setTags] = useState<string[]>([])
   const [categoryId, setCategoryId] = useState("")
 
   useEffect(() => {
     if (post) {
       setTitle(post.title)
       setContent(post.content)
+      setTags(post.tags?.map((t) => t.name) ?? [])
       setCategoryId(post.category_id ? String(post.category_id) : "")
     }
   }, [post])
@@ -72,6 +75,7 @@ export function EditPost() {
         title: title.trim(),
         content: content.trim(),
         category_id: categoryId ? Number(categoryId) : null,
+        tags,
       },
       { onSuccess: () => navigate(`/post/${editPostId}`) }
     )
@@ -103,6 +107,8 @@ export function EditPost() {
             </SelectContent>
           </Select>
         </div>
+
+        <TagInput tags={tags} onChange={setTags} />
 
         <MarkdownEditor value={content} onChange={setContent} />
 
