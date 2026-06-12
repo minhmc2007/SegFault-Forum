@@ -42,6 +42,7 @@ export function useVote() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["posts"] })
+      queryClient.invalidateQueries({ queryKey: ["post"] })
     },
   })
 }
