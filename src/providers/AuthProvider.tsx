@@ -8,6 +8,8 @@ interface AuthContextType {
   user: User | null
   profile: Profile | null
   signInWithGithub: () => Promise<void>
+  signInWithGoogle: () => Promise<void>
+  signInWithFacebook: () => Promise<void>
   signOut: () => Promise<void>
   loading: boolean
 }
@@ -69,13 +71,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     })
   }
 
+  async function signInWithGoogle() {
+    await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: `${window.location.origin}${window.location.pathname}` },
+    })
+  }
+
+  async function signInWithFacebook() {
+    await supabase.auth.signInWithOAuth({
+      provider: "facebook",
+      options: { redirectTo: `${window.location.origin}${window.location.pathname}` },
+    })
+  }
+
   async function signOut() {
     await supabase.auth.signOut()
     setProfile(null)
   }
 
   return (
-    <AuthContext.Provider value={{ session, user, profile, signInWithGithub, signOut, loading }}>
+    <AuthContext.Provider value={{ session, user, profile, signInWithGithub, signInWithGoogle, signInWithFacebook, signOut, loading }}>
       {children}
     </AuthContext.Provider>
   )
