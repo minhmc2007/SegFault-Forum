@@ -6,7 +6,8 @@ import { SignInButton } from "@/components/auth/SignInButton"
 import { UserAvatar } from "@/components/auth/UserAvatar"
 import { SearchBar } from "@/components/search/SearchBar"
 import { ThemeToggle } from "@/components/layout/ThemeToggle"
-import { Activity, GitCommit, LogOut, Terminal } from "lucide-react"
+import { Activity, GitCommit, LogOut, Shield, Terminal } from "lucide-react"
+import { NotificationBell } from "@/components/notifications/NotificationBell"
 import { rankLabels, rankColors } from "@/types"
 import type { UserRank } from "@/types"
 
@@ -46,6 +47,12 @@ export function Header() {
           >
             <Activity className="h-5 w-5" />
           </Link>
+          {user && <NotificationBell />}
+          {profile?.is_admin && (
+            <Link to="/admin" className="text-muted-foreground hover:text-foreground transition-colors" title="Admin">
+              <Shield className="h-5 w-5" />
+            </Link>
+          )}
           <ThemeToggle />
           <SearchBar />
 

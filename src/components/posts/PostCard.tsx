@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom"
 import { VoteButton } from "@/components/voting/VoteButton"
 import { UserAvatar } from "@/components/auth/UserAvatar"
+import { ReportButton } from "@/components/reports/ReportButton"
 import { formatDistanceToNow } from "date-fns"
 import { MessageSquare } from "lucide-react"
 import type { Post, UserRank } from "@/types"
@@ -83,6 +84,7 @@ export function PostCard({ post }: PostCardProps) {
             <MessageSquare className="h-3.5 w-3.5" />
             {post.comment_count}
           </Link>
+          <ReportButton contentType="post" contentId={post.id} />
         </div>
       </div>
     </div>

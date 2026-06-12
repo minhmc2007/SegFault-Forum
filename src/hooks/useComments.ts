@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/lib/supabase"
 import { useAuth } from "@/providers/AuthProvider"
 import { censor } from "@/lib/profanity"
+import { isPunished } from "@/lib/punishment"
 import { useEffect } from "react"
 import type { Comment } from "@/types"
 
@@ -87,6 +88,7 @@ export function useCreateComment() {
       depth: number
     }) => {
       if (!user) throw new Error("Not authenticated")
+      if (await isPunished(user.id, "mute")) throw new Error("You are muted and cannot comment")
 
       const { error } = await supabase.from("comments").insert({
         post_id: postId,

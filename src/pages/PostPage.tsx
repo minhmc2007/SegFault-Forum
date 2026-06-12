@@ -5,6 +5,7 @@ import { useAuth } from "@/providers/AuthProvider"
 import { MarkdownRenderer } from "@/components/markdown/MarkdownRenderer"
 import { VoteButton } from "@/components/voting/VoteButton"
 import { UserAvatar } from "@/components/auth/UserAvatar"
+import { ReportButton } from "@/components/reports/ReportButton"
 import { CommentForm } from "@/components/comments/CommentForm"
 import { CommentThread } from "@/components/comments/CommentThread"
 import { Button } from "@/components/ui/button"
@@ -128,6 +129,7 @@ export function PostPage() {
               <MessageSquare className="h-3.5 w-3.5" />
               {post.comment_count} comments
             </span>
+            <ReportButton contentType="post" contentId={post.id} />
           </div>
 
           <div className="border-t pt-6">

@@ -118,6 +118,39 @@ export type Database = {
           },
         ]
       }
+      notifications: {
+        Row: {
+          created_at: string
+          id: number
+          link: string | null
+          message: string
+          read: boolean
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          link?: string | null
+          message: string
+          read?: boolean
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          link?: string | null
+          message?: string
+          read?: boolean
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       post_tags: {
         Row: {
           post_id: string
@@ -238,6 +271,75 @@ export type Database = {
         }
         Relationships: []
       }
+      punishments: {
+        Row: {
+          active: boolean
+          created_at: string
+          created_by: string
+          expires_at: string | null
+          id: number
+          reason: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          created_by: string
+          expires_at?: string | null
+          id?: number
+          reason: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          created_by?: string
+          expires_at?: string | null
+          id?: number
+          reason?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      reports: {
+        Row: {
+          content_id: string
+          content_type: string
+          created_at: string
+          id: number
+          reason: string
+          reporter_id: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+        }
+        Insert: {
+          content_id: string
+          content_type: string
+          created_at?: string
+          id?: number
+          reason: string
+          reporter_id: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+        }
+        Update: {
+          content_id?: string
+          content_type?: string
+          created_at?: string
+          id?: number
+          reason?: string
+          reporter_id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
       tags: {
         Row: {
           created_at: string
@@ -300,6 +402,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      is_user_punished: {
+        Args: { ptype: string; uid: string }
+        Returns: boolean
+      }
       post_hotness: {
         Args: { created_at: string; vote_count: number }
         Returns: number

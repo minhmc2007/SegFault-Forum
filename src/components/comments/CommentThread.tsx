@@ -2,6 +2,7 @@ import { useState } from "react"
 import type { Comment, UserRank } from "@/types"
 import { rankLabels, rankColors } from "@/types"
 import { UserAvatar } from "@/components/auth/UserAvatar"
+import { ReportButton } from "@/components/reports/ReportButton"
 import { CommentForm } from "./CommentForm"
 import { formatDistanceToNow } from "date-fns"
 import { Reply } from "lucide-react"
@@ -42,13 +43,16 @@ export function CommentItem({ comment, postId }: CommentItemProps) {
 
         <p className="text-sm mt-1 whitespace-pre-wrap">{comment.content}</p>
 
-        <button
-          onClick={() => setShowReply(!showReply)}
-          className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground mt-1 transition-colors"
-        >
-          <Reply className="h-3 w-3" />
-          Reply
-        </button>
+        <div className="flex items-center gap-2 mt-1">
+          <button
+            onClick={() => setShowReply(!showReply)}
+            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <Reply className="h-3 w-3" />
+            Reply
+          </button>
+          <ReportButton contentType="comment" contentId={comment.id} />
+        </div>
 
         {(showReply || comment.depth < 3) && showReply && (
           <div className="mt-3">

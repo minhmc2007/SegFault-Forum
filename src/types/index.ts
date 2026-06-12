@@ -83,4 +83,38 @@ export interface Vote {
   vote_type: number
 }
 
+export interface Report {
+  id: number
+  reporter_id: string
+  content_type: "post" | "comment" | "profile"
+  content_id: string
+  reason: string
+  status: "pending" | "reviewed" | "dismissed"
+  created_at: string
+  reviewed_by: string | null
+  reviewed_at: string | null
+}
+
+export interface Notification {
+  id: number
+  user_id: string
+  type: string
+  title: string
+  message: string
+  link: string | null
+  read: boolean
+  created_at: string
+}
+
+export interface Punishment {
+  id: number
+  user_id: string
+  type: "mute" | "ban"
+  reason: string
+  expires_at: string | null
+  created_by: string
+  created_at: string
+  active: boolean
+}
+
 export type SortOption = "hot" | "top" | "new"

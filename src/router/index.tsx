@@ -8,6 +8,7 @@ import { Profile } from "@/pages/Profile"
 import { Search } from "@/pages/Search"
 import { StatusPage } from "@/pages/StatusPage"
 import { ChangelogPage } from "@/pages/ChangelogPage"
+import { AdminPage } from "@/pages/AdminPage"
 import { NotFound } from "@/pages/NotFound"
 
 export const router = createHashRouter([
@@ -22,6 +23,7 @@ export const router = createHashRouter([
       { path: "/search", element: <Search /> },
       { path: "/status", element: <StatusPage /> },
       { path: "/changelog", element: <ChangelogPage /> },
+      { path: "/admin", element: <AdminPage /> },
       { path: "*", element: <NotFound /> },
     ],
   },
