@@ -7,6 +7,7 @@ import { EditPost } from "@/pages/EditPost"
 import { Profile } from "@/pages/Profile"
 import { Search } from "@/pages/Search"
 import { StatusPage } from "@/pages/StatusPage"
+import { ChangelogPage } from "@/pages/ChangelogPage"
 import { NotFound } from "@/pages/NotFound"
 
 export const router = createHashRouter([
@@ -20,6 +21,7 @@ export const router = createHashRouter([
       { path: "/profile/:username", element: <Profile /> },
       { path: "/search", element: <Search /> },
       { path: "/status", element: <StatusPage /> },
+      { path: "/changelog", element: <ChangelogPage /> },
       { path: "*", element: <NotFound /> },
     ],
   },
