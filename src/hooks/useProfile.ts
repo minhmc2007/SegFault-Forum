@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/lib/supabase"
 import { useAuth } from "@/providers/AuthProvider"
+import { censor } from "@/lib/profanity"
 import type { Profile, Post } from "@/types"
 
 export function useProfile(username: string) {
@@ -66,9 +67,14 @@ export function useUpdateProfile() {
   return useMutation({
     mutationFn: async (updates: Partial<Pick<Profile, "name" | "bio" | "website" | "location" | "avatar_url">>) => {
       if (!user) throw new Error("Not authenticated")
+      const sanitized = {
+        ...updates,
+        ...(updates.name !== undefined && { name: censor(updates.name) }),
+        ...(updates.bio !== undefined && { bio: censor(updates.bio) }),
+      }
       const { error } = await supabase
         .from("profiles")
-        .update(updates)
+        .update(sanitized)
         .eq("id", user.id)
       if (error) throw error
     },

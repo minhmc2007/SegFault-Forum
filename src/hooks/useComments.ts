@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/lib/supabase"
 import { useAuth } from "@/providers/AuthProvider"
+import { censor } from "@/lib/profanity"
 import { useEffect } from "react"
 import type { Comment } from "@/types"
 
@@ -91,7 +92,7 @@ export function useCreateComment() {
         post_id: postId,
         user_id: user.id,
         parent_id: parentId ?? null,
-        content,
+        content: censor(content),
         depth,
       })
       if (error) throw error

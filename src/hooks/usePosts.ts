@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/lib/supabase"
 import { useAuth } from "@/providers/AuthProvider"
+import { censor } from "@/lib/profanity"
 import type { Post, SortOption, Tag } from "@/types"
 
 async function attachTags(post: Post): Promise<Post> {
@@ -98,7 +99,7 @@ export function useCreatePost() {
       if (!user) throw new Error("Not authenticated")
       const { data, error } = await supabase
         .from("posts")
-        .insert({ title, content, category_id, user_id: user.id })
+        .insert({ title: censor(title), content: censor(content), category_id, user_id: user.id })
         .select("id")
         .single()
       if (error) throw error
@@ -131,7 +132,7 @@ export function useUpdatePost() {
       category_id: number | null
       tags?: string[]
     }) => {
-      await supabase.from("posts").update({ title, content, category_id }).eq("id", postId)
+      await supabase.from("posts").update({ title: censor(title), content: censor(content), category_id }).eq("id", postId)
 
       if (tags !== undefined) {
         await supabase.from("post_tags").delete().eq("post_id", postId)
