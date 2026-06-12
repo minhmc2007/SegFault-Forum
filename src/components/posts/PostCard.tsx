@@ -3,7 +3,8 @@ import { VoteButton } from "@/components/voting/VoteButton"
 import { UserAvatar } from "@/components/auth/UserAvatar"
 import { formatDistanceToNow } from "date-fns"
 import { MessageSquare } from "lucide-react"
-import type { Post } from "@/types"
+import type { Post, UserRank } from "@/types"
+import { rankLabels, rankColors } from "@/types"
 
 interface PostCardProps {
   post: Post
@@ -61,6 +62,14 @@ export function PostCard({ post }: PostCardProps) {
               size="sm"
             />
             {post.author?.username}
+            {post.author?.rank && (
+              <span
+                className="text-[10px] font-semibold px-1 py-0.5 rounded"
+                style={{ backgroundColor: rankColors[post.author.rank as UserRank] + "20", color: rankColors[post.author.rank as UserRank] }}
+              >
+                {rankLabels[post.author.rank as UserRank]}
+              </span>
+            )}
           </Link>
 
           <span>

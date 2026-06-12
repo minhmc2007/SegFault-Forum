@@ -5,7 +5,7 @@ import { SignInButton } from "@/components/auth/SignInButton"
 import { UserAvatar } from "@/components/auth/UserAvatar"
 import { SearchBar } from "@/components/search/SearchBar"
 import { ThemeToggle } from "@/components/layout/ThemeToggle"
-import { Terminal } from "lucide-react"
+import { Activity, Terminal } from "lucide-react"
 import { rankLabels, rankColors } from "@/types"
 import type { UserRank } from "@/types"
 
@@ -21,6 +21,13 @@ export function Header() {
         </Link>
 
         <div className="flex items-center gap-3">
+          <Link
+            to="/status"
+            className="text-muted-foreground hover:text-foreground transition-colors"
+            title="System Status"
+          >
+            <Activity className="h-5 w-5" />
+          </Link>
           <ThemeToggle />
           <SearchBar />
 

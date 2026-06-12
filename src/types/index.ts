@@ -55,7 +55,7 @@ export interface Post {
   vote_count: number
   comment_count: number
   created_at: string
-  author?: { username: string; avatar_url: string | null }
+  author?: { username: string; avatar_url: string | null; rank: UserRank }
   category?: { name: string; slug: string; color: string }
   tags?: Tag[]
   user_vote?: number | null
@@ -69,7 +69,7 @@ export interface Comment {
   content: string
   depth: number
   created_at: string
-  author?: { username: string; avatar_url: string | null }
+  author?: { username: string; avatar_url: string | null; rank: UserRank }
   replies?: Comment[]
 }
 

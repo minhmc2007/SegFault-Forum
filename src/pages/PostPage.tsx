@@ -10,6 +10,8 @@ import { CommentThread } from "@/components/comments/CommentThread"
 import { Button } from "@/components/ui/button"
 import { formatDistanceToNow } from "date-fns"
 import { Loader2, MessageSquare, Pencil, Trash2 } from "lucide-react"
+import { rankLabels, rankColors } from "@/types"
+import type { UserRank } from "@/types"
 
 export function PostPage() {
   const { id } = useParams<{ id: string }>()
@@ -110,6 +112,14 @@ export function PostPage() {
                 size="sm"
               />
               {post.author?.username}
+              {post.author?.rank && (
+                <span
+                  className="text-[10px] font-semibold px-1 py-0.5 rounded"
+                  style={{ backgroundColor: rankColors[post.author.rank as UserRank] + "20", color: rankColors[post.author.rank as UserRank] }}
+                >
+                  {rankLabels[post.author.rank as UserRank]}
+                </span>
+              )}
             </Link>
             <span>
               {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}

@@ -1,5 +1,6 @@
 import { useState } from "react"
-import type { Comment } from "@/types"
+import type { Comment, UserRank } from "@/types"
+import { rankLabels, rankColors } from "@/types"
 import { UserAvatar } from "@/components/auth/UserAvatar"
 import { CommentForm } from "./CommentForm"
 import { formatDistanceToNow } from "date-fns"
@@ -26,6 +27,14 @@ export function CommentItem({ comment, postId }: CommentItemProps) {
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 text-sm">
           <span className="font-medium">{comment.author?.username}</span>
+          {comment.author?.rank && (
+            <span
+              className="text-[10px] font-semibold px-1 py-0.5 rounded"
+              style={{ backgroundColor: rankColors[comment.author.rank as UserRank] + "20", color: rankColors[comment.author.rank as UserRank] }}
+            >
+              {rankLabels[comment.author.rank as UserRank]}
+            </span>
+          )}
           <span className="text-muted-foreground">
             {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
           </span>

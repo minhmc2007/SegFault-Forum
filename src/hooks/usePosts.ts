@@ -41,7 +41,7 @@ async function saveTags(postId: string, tagNames: string[]) {
 
 const postQuery = `
   *,
-  author:profiles!posts_user_id_fkey(username, avatar_url),
+  author:profiles!posts_user_id_fkey(username, avatar_url, rank),
   category:categories(name, slug, color)
 `
 
