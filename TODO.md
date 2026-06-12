@@ -25,16 +25,17 @@
 - [ ] Auto-complete dropdown when typing `@` in the editor
 
 ## SegFault BOT (AI Agent — Gemini 3 Flash Preview via Gemini API)
-- [ ] Bot user account "SegFault BOT" that can post and comment like a normal user
-- [ ] Model: `gemini-3-flash-preview` (cost-efficient, good enough for deciding update importance)
-- [ ] Listens to GitHub repo push events (via webhook or polling)
-- [ ] When a new commit/PR/update is detected, Gemini decides: *Is this change important enough to warrant a forum post?*
-- [ ] Strict system prompt to prevent AI slop:
-  - Only post about meaningful changes (feature releases, breaking changes, major fixes)
-  - Ignore trivial commits (typo fixes, dependency bumps, chore commits)
-  - Posts must be concise, factual, and human-readable
-  - No excessive enthusiasm, markdown fluff, or generic filler
-  - Format: short title + 2-4 sentence summary of what changed and why it matters
-- [ ] Bot can reply to comments on its posts with factual follow-ups
-- [ ] Rate-limited to avoid spam
-- [ ] API key stored as GitHub secret `GEMINI_API_KEY`
+- [x] Bot user account "SegFault BOT" (UUID: `00000000-0000-0000-0000-000000000001`)
+- [x] Model: `gemini-3-flash-preview`
+- [x] Supabase Edge Function `gh-webhook` receives GitHub push events
+- [x] Gemini evaluates commit importance and decides whether to post
+- [x] Strict system prompt to prevent AI slop (only posts meaningful changes)
+- [x] Function deployed: `https://dqvhqppjjyjrivnvxfsb.supabase.co/functions/v1/gh-webhook`
+- [x] Gemini API key stored as Supabase secret `GEMINI_API_KEY`
+- [ ] **Set up GitHub webhook** — go to repo → Settings → Webhooks → Add webhook
+  - Payload URL: `https://dqvhqppjjyjrivnvxfsb.supabase.co/functions/v1/gh-webhook`
+  - Content type: `application/json`
+  - Events: `Pushes`
+  - No secret needed
+- [ ] Bot replying to comments (future)
+- [ ] Rate-limiting (future)
